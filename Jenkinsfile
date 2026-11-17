@@ -8,8 +8,8 @@ pipeline {
     }
     stages {
         stage('Build Java app') {
-            steps {
-                sh "mvn package install -DskipTests=true"
+            steps { 
+                sh " mvn package install -DskipTests "
             }
         }
         stage('Test Java app') {
@@ -17,9 +17,9 @@ pipeline {
                 sh "mvn test"
             }
         }
-        stage('Bulid Docker image') {
+        stage('Build Docker image') {
             steps {
-                sh "docker bulid -t javaapp:v1 ."
+                sh "docker build -t javaapp:v1 ."
             }
         }
     }
