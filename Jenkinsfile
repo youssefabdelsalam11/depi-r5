@@ -27,9 +27,9 @@ pipeline {
             }
         }
 
-        stage('Build Docker image') {
+        stage('Push Docker image') {
             steps {
-                sh "docker build -t youssefabdelsalllam1/java-app:${BUILD_NUMBER} ."
+                sh "docker push -t youssefabdelsalllam1/java-app:${BUILD_NUMBER} ."
             }
         }
     }
