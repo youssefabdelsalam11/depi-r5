@@ -6,7 +6,7 @@ pipeline {
         jdk 'jdk-11'
         maven 'maven-3-5-4'
     }
-    variables {
+    environment {
         dockerhub_username = credentials('dockerhub-username')
         dockerhub_password = credentials('dockerhub-password')
     }
@@ -29,7 +29,7 @@ pipeline {
 
         stage('Build Docker image') {
             steps {
-                sh "docker build -t youssefabdelsalllam1/java-app:${BULID_NUMBER} ."
+                sh "docker build -t youssefabdelsalllam1/java-app:${BUILD_NUMBER} ."
             }
         }
     }
