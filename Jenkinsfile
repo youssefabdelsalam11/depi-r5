@@ -23,13 +23,16 @@ pipeline {
         }
         stage('Doker Login') {
             steps {
-                sh "docker login -u ${dockerhub_username}  -p ${dockerhub_password}"
+                sh 'docker login -u "$dockerhub_username" -p "$dockerhub_password"'
             }
         }
 
-        stage('Push Docker image') {
+        stage('Build and Push Docker image') {
             steps {
-                sh " docker push -t youssefabdelsalllam1/java-app:${BUILD_NUMBER} ."
+                
+                sh "docker build -t ${dockerhub_username}/java-app:${BUILD_NUMBER} ."
+
+                sh "docker push ${dockerhub_username}/java-app:${BUILD_NUMBER}"
             }
         }
     }
