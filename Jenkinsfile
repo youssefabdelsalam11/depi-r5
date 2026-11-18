@@ -7,8 +7,8 @@ pipeline {
         maven 'maven-3-5-4'
     }
     environment {
-        dockerhub_username = credentials('dockerhub-username')
-        dockerhub_password = credentials('dockerhub-password')
+        dockerhub_username = credentials("dockerhub-username")
+        dockerhub_password = credentials("dockerhub-password")
     }
     stages {
         stage('Build Java app') {
@@ -29,7 +29,7 @@ pipeline {
 
         stage('Push Docker image') {
             steps {
-                sh "docker push -t youssefabdelsalllam1/java-app:${BUILD_NUMBER} ."
+                sh " docker push -t youssefabdelsalllam1/java-app:${BUILD_NUMBER} ."
             }
         }
     }
