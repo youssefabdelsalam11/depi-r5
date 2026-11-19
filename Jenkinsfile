@@ -30,7 +30,7 @@ pipeline {
                 label 'Agent-01' 
             }
             steps {
-                sh"docker build -t ${dockerhub_username}/java-app:v${BUILD_NUMBER} ."
+                sh"docker build -t ${dockerhub_username}/java-app:v${BUILD_NUMBER}"
             }
         }
         stage('Doker Login') {
@@ -46,7 +46,9 @@ pipeline {
                 label 'Agent-01' 
             }
             steps {
-                sh "docker push ${dockerhub_username}/java-app:v${BUILD_NUMBER}"
+                retry(3) {
+                    sh "docker push ${dockerhub_username}/java-app:v${BUILD_NUMBER}"
+                }
             }
         }
         stage('Deploy Docker image') {
@@ -54,7 +56,7 @@ pipeline {
                 label 'Agent-02' 
             }
             steps {
-                sh "docker run -d -p 8090:8090 --name java-app ${dockerhub_username}/java-app:${BUILD_NUMBER}"
+                sh "docker run -d -p 8090:8090 --name java-app ${dockerhub_username}/java-app:v${BUILD_NUMBER}"
             }
         }
     }
