@@ -30,7 +30,7 @@ pipeline {
                 label 'Agent-01' 
             }
             steps {
-                sh"docker build -t ${dockerhub_username}/java-app:v${BUILD_NUMBER}"
+                sh"docker build -t ${dockerhub_username}/java-app:v${BUILD_NUMBER} ."
             }
         }
         stage('Doker Login') {
