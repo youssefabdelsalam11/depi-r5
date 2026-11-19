@@ -46,7 +46,7 @@ pipeline {
                 label 'Agent-02' 
             }
             steps {
-                sh "docker run -d -p 8090:8090 --name java-app ${dockerhub_username}/java-app:v${BUILD_NUMBER}"
+                sh "docker run -d -p 8090:8090 --name java-app ${dockerhub_username}/java-app:v24"
             }
         }
     }
