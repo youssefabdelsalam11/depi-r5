@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        label "Agent-01"
-    }
+    agent none
     tools {
         jdk 'jdk-11'
         maven 'maven-3-5-4'
@@ -12,27 +10,51 @@ pipeline {
     }
     stages {
         stage('Build Java app') {
+            agent { 
+                label 'Agent-01' 
+            }
             steps { 
                 sh " mvn package install -DskipTests "
             }
         }
         stage('Test Java app') {
+            agent { 
+                label 'Agent-01' 
+            }
             steps {
                 sh "mvn test"
             }
         }
+        stage('Bulid Docker image'){
+            agent { 
+                label 'Agent-01' 
+            }
+            steps {
+                sh 'docker build -t "$dockerhub_username/java-app:$BUILD_NUMBER" .'
+            }
+        }
         stage('Doker Login') {
+            agent { 
+                label 'Agent-01' 
+            }
             steps {
                 sh 'docker login -u "$dockerhub_username" -p "$dockerhub_password"'
             }
         }
-
-        stage('Build and Push Docker image') {
+        stage('Push Docker image') {
+            agent { 
+                label 'Agent-01' 
+            }
             steps {
-                
-                sh "docker build -t ${dockerhub_username}/java-app:${BUILD_NUMBER} ."
-
-                sh "docker push ${dockerhub_username}/java-app:${BUILD_NUMBER}"
+                sh 'docker push "$dockerhub_username/java-app:$BUILD_NUMBER"'
+            }
+        }
+        stage('Deploy Docker image') {
+            agent { 
+                label 'Agent-02' 
+            }
+            steps {
+                sh 'docker run -d -p 8090:8090 --name java-app "$dockerhub_username/java-app:$BUILD_NUMBER"'
             }
         }
     }
