@@ -23,4 +23,20 @@ node("Agent-01") {
             sh "docker login -u ${dockerhub_username} -p ${dockerhub_password}"
         }
     }
+    stage('Deploy Docker image') {
+        node ("Agent-02") {
+            def IMAGE_FOUNDED= sh returnStdout: true, script: 'docker ps -a | grep java-app || true'
+            echo"${IMAGE_FOUNDED}" 
+            if (IMAGE_FOUNDED){
+                withCredentials([string(credentialsId: 'dockerhub-username', variable: 'dockerhub_username')]) {
+                    sh "docker rm -f java-app && docker run -d -p 8090:8090 --name java-app ${dockerhub_username}/java-app:v40"
+                }    
+            }
+            else {
+                withCredentials([string(credentialsId: 'dockerhub-username', variable: 'dockerhub_username')]) {
+                    sh "docker run -d -p 8090:8090 --name java-app ${dockerhub_username}/java-app:v40"
+                }
+            }
+        }
+    }
 }
