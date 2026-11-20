@@ -33,22 +33,22 @@ pipeline {
                 sh"docker build -t ${dockerhub_username}/java-app:v${BUILD_NUMBER} ."
             }
         }
-        stage('Doker Login') {
-            agent { 
-                label 'Agent-01' 
-            }
-            steps {
-                sh "docker login -u ${dockerhub_username} -p ${dockerhub_password}"
-            }
-        }
-        stage('Push Docker image') {
-            agent { 
-                label 'Agent-01' 
-            }
-            steps {
-                sh "docker push ${dockerhub_username}/java-app:v${BUILD_NUMBER}"
-            }
-        }
+        // stage('Doker Login') {
+        //     agent { 
+        //         label 'Agent-01' 
+        //     }
+        //     steps {
+        //         sh "docker login -u ${dockerhub_username} -p ${dockerhub_password}"
+        //     }
+        // }
+        // stage('Push Docker image') {
+        //     agent { 
+        //         label 'Agent-01' 
+        //     }
+        //     steps {
+        //         sh "docker push ${dockerhub_username}/java-app:v${BUILD_NUMBER}"
+        //     }
+        // }
         stage('Deploy Docker image') {
             agent { 
                 label 'Agent-02' 
