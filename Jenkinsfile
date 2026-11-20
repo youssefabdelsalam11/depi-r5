@@ -14,7 +14,7 @@ pipeline {
                 label 'Agent-01' 
             }
             steps { 
-                sh " mvn package install -DskipTests "
+                sh " mvn package install -DskipTests=true "
             }
         }
         stage('Test Java app') {
