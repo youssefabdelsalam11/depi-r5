@@ -1,0 +1,26 @@
+node("Agent-01") {
+    def maven = tool name: 'maven-3-5-4', type: 'maven'
+    def jdk = tool name: 'jdk-11', type: 'jdk'
+    stage("Checkout the SCM") {
+        git branch: 'main', url: 'https://github.com/youssefabdelsalam11/depi-r5.git'
+    }
+    stage('Bulid Java App') {
+        env.PATH = "${maven}/bin:${jdk}/bin:${env.PATH}"
+        sh "java --version"
+        sh "mvn --version"
+        sh " mvn package install -DskipTests=true "
+    }
+    stage('Test Java app') {    
+        sh "mvn test"
+    }
+    stage('Bulid Docker image'){
+        withCredentials([string(credentialsId: 'dockerhub-username', variable: 'dockerhub_username')]) {
+            sh"docker build -t ${dockerhub_username}/java-app:v${BUILD_NUMBER} ."
+        }
+    }
+    stage('Doker Login') {
+        withCredentials([string(credentialsId: 'dockerhub-username', variable: 'dockerhub_username'), string(credentialsId: 'dockerhub-password', variable: 'dockerhub_password')]) {
+            sh "docker login -u ${dockerhub_username} -p ${dockerhub_password}"
+        }
+    }
+}
