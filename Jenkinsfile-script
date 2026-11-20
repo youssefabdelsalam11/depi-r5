@@ -15,7 +15,7 @@ node("Agent-01") {
     }
     stage('Bulid Docker image'){
         withCredentials([string(credentialsId: 'dockerhub-username', variable: 'dockerhub_username')]) {
-            sh"docker build -t ${dockerhub_username}/java-app:v${BUILD_NUMBER} ."
+            sh"docker build -t ${dockerhub_username}/java-app:v40 ."
         }
     }
     stage('Doker Login') {
