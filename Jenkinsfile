@@ -1,5 +1,9 @@
+@Library('sharedlib-test') _
+
 pipeline {
-    agent none
+    agent { 
+        label 'Agent-01' 
+    }
     tools {
         jdk 'jdk-11'
         maven 'maven-3-5-4'
@@ -9,42 +13,43 @@ pipeline {
         dockerhub_password = credentials("dockerhub-password")
     }
     stages {
+
         stage('Build Java app') {
-            agent { 
-                label 'Agent-01' 
-            }
-            steps { 
-                sh " mvn package install -DskipTests=true "
+            steps {
+                script {
+                    def mvn = new edu.depi.maven()
+                    mvn.MavenCommand("package install -DskipTests=true")
+                }
             }
         }
+
         stage('Test Java app') {
-            agent { 
-                label 'Agent-01' 
-            }
-            steps {
-                sh "mvn test"
+            steps{
+                script {
+                    def mvn = new edu.depi.maven()
+                    mvn.MavenCommand("test")
+                }
             }
         }
+
         stage('Bulid Docker image'){
-            agent { 
-                label 'Agent-01' 
+            steps{
+                script {
+                    def dockerfun = new edu.depi.docker()
+                    dockerfun.DockerBulid( "${dockerhub_username}/java-app","v40")
+                }
             }
-            steps {
-                sh"docker build -t ${dockerhub_username}/java-app:v${BUILD_NUMBER} ."
+            
+        }
+        stage('Doker Login') {
+            steps{
+                script {
+                    def dockerfun = new edu.depi.docker()
+                    dockerfun.DockerLogin("${dockerhub_username}","${dockerhub_password}")
+                }
             }
         }
-        // stage('Doker Login') {
-        //     agent { 
-        //         label 'Agent-01' 
-        //     }
-        //     steps {
-        //         sh "docker login -u ${dockerhub_username} -p ${dockerhub_password}"
-        //     }
-        // }
         // stage('Push Docker image') {
-        //     agent { 
-        //         label 'Agent-01' 
-        //     }
         //     steps {
         //         sh "docker push ${dockerhub_username}/java-app:v${BUILD_NUMBER}"
         //     }
