@@ -46,7 +46,10 @@ pipeline {
                 label 'Agent-02' 
             }
             steps {
-                sh "docker run -d -p 8090:8090 --name java-app ${dockerhub_username}/java-app:v24"
+                sh '''
+                IMAGE_FOUNDED=$(docker ps -a | grep java-app)  
+                if [ -n IMAGE_FOUNDED] : then docker rm -rf java-app && docker run -d -p 8090:8090 --name java-app ${dockerhub_username}/java-app:v${BUILD_NUMBER} ; else docker run -d -p 8090:8090 --name java-app ${dockerhub_username}/java-app:v${BUILD_NUMBER}; fi 
+                '''
             }
         }
     }
