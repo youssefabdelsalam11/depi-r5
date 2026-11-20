@@ -41,16 +41,24 @@ pipeline {
                 sh "docker login -u ${dockerhub_username} -p ${dockerhub_password}"
             }
         }
+        stage('Push Docker image') {
+            agent { 
+                label 'Agent-01' 
+            }
+            steps {
+                sh "docker push ${dockerhub_username}/java-app:v${BUILD_NUMBER}"
+            }
+        }
         stage('Deploy Docker image') {
             agent { 
                 label 'Agent-02' 
             }
             steps {
                 sh '''
-                IMAGE_FOUNDED=$(docker ps -a | grep java-app)
+                IMAGE_FOUNDED=$(docker ps -a | grep java-app) || true
                 if [[ -n $IMAGE_FOUNDED ]]; 
-                then docker rm -f java-app && docker run -d -p 8090:8090 --name java-app ${dockerhub_username}/java-app:v26;
-                else docker run -d -p 8090:8090 --name java-app ${dockerhub_username}/java-app:v26;
+                then docker rm -f java-app && docker run -d -p 8090:8090 --name java-app ${dockerhub_username}/java-app:v${BUILD_NUMBER};
+                else docker run -d -p 8090:8090 --name java-app ${dockerhub_username}/java-app:v${BUILD_NUMBER};
                 fi
                 '''
             }
